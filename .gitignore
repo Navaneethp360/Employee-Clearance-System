@@ -1,0 +1,9 @@
+# Ignore the folders
+/bin/
+/obj/
+/.vs/
+/s.vscode/
+*.dll
+*.pdb
+/obj
+/bin

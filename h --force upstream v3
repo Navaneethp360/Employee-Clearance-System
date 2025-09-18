@@ -1,0 +1,40 @@
+[33mcd68991[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mv3[m[33m, [m[1;31mupstream/v3[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m Merge pull request #4 from Navaneethp360/dev
+[33m90fab87[m[33m ([m[1;31morigin/dev[m[33m)[m Login text
+[33m90b2181[m login text
+[33m9d09e92[m Create .gitignore
+[33m8ee7715[m Update .gitignore
+[33me40a127[m Merge pull request #3 from Navaneethp360/dev
+[33md171a4f[m Delete .vscode directory
+[33mf2a4e0e[m Delete .vs/MedicalSystem directory
+[33m3d04883[m Delete .vscode directory
+[33m0b418aa[m Delete .vs/MedicalSystem directory
+[33m35c82ae[m Create .gitignore
+[33m3802bf5[m collapsible menus in medical history page
+[33m23e5bfd[m collapsable sections in employee records
+[33mdca481a[m Merge pull request #1 from Navaneethp360/dev
+[33mba9e3cc[m Create MedicalSystemDB
+[33m044e870[m push
+[33mf13550a[m conn close
+[33mba2f9f8[m updated login UI color scheme to match the application theme
+[33m0226eb6[m Report page which shows no of visits of an employee and can also search emp medical history
+[33m41087e9[m homepage welcome message
+[33m0c6e633[m dynamic screen navigation fetching
+[33mdd17479[m Fully dynamic screen management and user screen management
+[33m699ed3d[m dynamic usermanagement
+[33mf425a93[m medical history updated
+[33mab90934[m medicalinfo page
+[33m6089116[m session management persistance
+[33m8968a60[m employee records UI
+[33md54bd3c[m medical records page
+[33m8747088[m employee records
+[33ma0a29f1[m employee records page
+[33m0357523[m simple UI
+[33m694e6b3[m simple login and homepage
+[33m9a4253a[m new project rebase
+[33m6a24d91[m edeit
+[33md6b52f0[m gg
+[33m64ffc49[m Revert "deleted"
+[33me61893a[m deleted
+[33md581398[m html2
+[33m4ab9b34[m hai
+[33m4a04ada[m Add project files.

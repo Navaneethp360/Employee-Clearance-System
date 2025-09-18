@@ -39,11 +39,18 @@ namespace MedicalSystem
                 {
                     try
                     {
+                        // Get connection string and add 5-second timeout
                         string connStr = ConfigurationManager.ConnectionStrings[connections[i]].ConnectionString;
-                        using (SqlConnection conn = new SqlConnection(connStr))
+                        SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr)
+                        {
+                            ConnectTimeout = 5 // 5 seconds
+                        };
+
+                        using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
                         using (SqlCommand cmd = new SqlCommand(userCheckQuery, conn))
                         {
                             cmd.Parameters.AddWithValue("@EmpID", empId);
+                            cmd.CommandTimeout = 5; // optional, command timeout
                             conn.Open();
                             object result = cmd.ExecuteScalar();
 

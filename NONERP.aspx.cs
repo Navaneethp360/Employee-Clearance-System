@@ -72,12 +72,12 @@ namespace MedicalSystem
                                 // For each query: 0 means cleared, 1 means pending
                                 if (status == 1)
                                 {
-                                    labels[i].CssClass += " red";
+                                    labels[i].CssClass += " green";
                                     hasPendingItems = true;
                                 }
                                 else
                                 {
-                                    labels[i].CssClass += " green";
+                                    labels[i].CssClass += " red";
                                 }
                             }
                         }

@@ -64,12 +64,12 @@ namespace MedicalSystem
                                 int status = Convert.ToInt32(result);
                                 if (status == 1)
                                 {
-                                    labels[i].CssClass += " red"; // active
+                                    labels[i].CssClass += " green"; // active
                                     hasActiveAccount = true;
                                 }
                                 else
                                 {
-                                    labels[i].CssClass += " green"; // inactive
+                                    labels[i].CssClass += " red"; // inactive
                                 }
                             }
                         }

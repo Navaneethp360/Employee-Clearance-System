@@ -24,18 +24,87 @@ namespace MedicalSystem
 
             try
             {
-                // Reset connection boxes
+                // Reset all connection boxes
                 ResetConnections();
 
-                // Check each system with its own connection string
-                conn1.CssClass += CheckSystem(empId, "NONERP_Conn1", "SELECT COUNT(*) FROM Leaves WHERE EmployeeID=@EmpID AND IsPending=1") ? " green" : " red";
-                conn2.CssClass += CheckSystem(empId, "NONERP_Conn2", "SELECT COUNT(*) FROM Assets WHERE EmployeeID=@EmpID AND IsReturned=0") ? " green" : " red";
-                conn3.CssClass += CheckSystem(empId, "NONERP_Conn3", "SELECT COUNT(*) FROM Trainings WHERE EmployeeID=@EmpID AND IsCompleted=0") ? " green" : " red";
-                conn4.CssClass += CheckSystem(empId, "NONERP_Conn4", "SELECT COUNT(*) FROM Payroll WHERE EmployeeID=@EmpID AND IsSettled=0") ? " green" : " red";
-                conn5.CssClass += CheckSystem(empId, "NONERP_Conn5", "SELECT COUNT(*) FROM MedicalRecords WHERE EmployeeID=@EmpID AND IsPendingClearance=1") ? " green" : " red";
+                string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3", "NONERP_Conn4", "NONERP_Conn5" };
+                string[] queries = {
+                    "SELECT IsPending FROM Leaves WHERE EmployeeID=@EmpID",
+                    "SELECT IsReturned FROM Assets WHERE EmployeeID=@EmpID",
+                    "SELECT IsCompleted FROM Trainings WHERE EmployeeID=@EmpID",
+                    "SELECT IsSettled FROM Payroll WHERE EmployeeID=@EmpID",
+                    "SELECT IsPendingClearance FROM MedicalRecords WHERE EmployeeID=@EmpID"
+                };
 
-                lblStatus.Text = "✅ Clearance check completed!";
-                lblStatus.CssClass = "status-message";
+                System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3, conn4, conn5 };
+
+                bool hasPendingItems = false;
+                bool recordFoundAnywhere = false;
+
+                for (int i = 0; i < connections.Length; i++)
+                {
+                    try
+                    {
+                        // Add 5-second timeout
+                        string connStr = ConfigurationManager.ConnectionStrings[connections[i]].ConnectionString;
+                        SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr)
+                        {
+                            ConnectTimeout = 5
+                        };
+
+                        using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
+                        using (SqlCommand cmd = new SqlCommand(queries[i], conn))
+                        {
+                            cmd.Parameters.AddWithValue("@EmpID", empId);
+                            cmd.CommandTimeout = 5; // query timeout
+                            conn.Open();
+
+                            object result = cmd.ExecuteScalar();
+                            if (result == null)
+                            {
+                                labels[i].CssClass += " gray"; // record not found
+                            }
+                            else
+                            {
+                                recordFoundAnywhere = true;
+                                int status = Convert.ToInt32(result);
+
+                                // For each query: 0 means cleared, 1 means pending
+                                if (status == 1)
+                                {
+                                    labels[i].CssClass += " red";
+                                    hasPendingItems = true;
+                                }
+                                else
+                                {
+                                    labels[i].CssClass += " green";
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        labels[i].CssClass += " gray"; // timeout or failure → gray
+                    }
+                }
+
+                // Overall status message
+                if (!recordFoundAnywhere)
+                {
+                    lblStatus.Text = "⚪ Employee record not found in any NONERP system.";
+                    lblStatus.CssClass = "status-message error";
+                }
+                else if (hasPendingItems)
+                {
+                    lblStatus.Text = "⚠️ Employee has pending clearance items in one or more NONERP systems.";
+                    lblStatus.CssClass = "status-message error";
+                }
+                else
+                {
+                    lblStatus.Text = "✅ Employee exists and has no pending clearance items.";
+                    lblStatus.CssClass = "status-message success";
+                }
+
                 lblStatus.Style["display"] = "block";
             }
             catch (Exception ex)
@@ -46,7 +115,7 @@ namespace MedicalSystem
             }
         }
 
-        // Reset connection boxes to default
+        // Reset all boxes before checking
         private void ResetConnections()
         {
             conn1.CssClass = "connection-box";
@@ -54,21 +123,6 @@ namespace MedicalSystem
             conn3.CssClass = "connection-box";
             conn4.CssClass = "connection-box";
             conn5.CssClass = "connection-box";
-        }
-
-        // Generic method to check any system with its own connection string
-        private bool CheckSystem(string empId, string connStrName, string query)
-        {
-            string connStr = ConfigurationManager.ConnectionStrings[connStrName].ConnectionString;
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@EmpID", empId);
-                conn.Open();
-                int count = Convert.ToInt32(cmd.ExecuteScalar());
-                return count == 0; // green if no pending items
-            }
         }
     }
 }

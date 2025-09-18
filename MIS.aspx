@@ -136,6 +136,10 @@
     background: #f8d7da;
     color: #721c24;
 }
+.connection-box.gray {
+    background: #e2e3e5;
+    color: #6c757d;
+}
 </style>
 
 <div class="page-content">

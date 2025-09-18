@@ -61,7 +61,13 @@ namespace MedicalSystem
         {
             string connStr = ConfigurationManager.ConnectionStrings[connStrName].ConnectionString;
 
-            using (SqlConnection conn = new SqlConnection(connStr))
+            // Add timeout if not already present
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr)
+            {
+                ConnectTimeout = 5 // 5 seconds timeout
+            };
+
+            using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
                 cmd.Parameters.AddWithValue("@EmpID", empId);
@@ -70,5 +76,6 @@ namespace MedicalSystem
                 return count == 0; // green if no pending items
             }
         }
+
     }
 }

@@ -27,6 +27,7 @@ It includes:
 - Uses color-coded boxes for clarity.
 
 ## 🖼️ Screenshots
+<img width="1915" height="962" alt="image" src="https://github.com/user-attachments/assets/1a7080a6-2711-4c84-a69b-2242b21ee46e" />
 
 ## 🤝 Contributing
 Pull requests are welcome! For major changes, please open an issue first to discuss your idea.

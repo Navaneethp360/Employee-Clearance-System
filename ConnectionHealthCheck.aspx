@@ -113,11 +113,11 @@
     <div class="section-box">
         <h3>MIS Connections</h3>
         <div class="connections">
-            <asp:Label ID="mis1" runat="server" CssClass="connection-box">MIS 1</asp:Label>
-            <asp:Label ID="mis2" runat="server" CssClass="connection-box">MIS 2</asp:Label>
-            <asp:Label ID="mis3" runat="server" CssClass="connection-box">MIS 3</asp:Label>
-            <asp:Label ID="mis4" runat="server" CssClass="connection-box">MIS 4</asp:Label>
-            <asp:Label ID="mis5" runat="server" CssClass="connection-box">MIS 5</asp:Label>
+            <asp:Label ID="mis1" runat="server" CssClass="connection-box">HEISCO</asp:Label>
+            <asp:Label ID="mis2" runat="server" CssClass="connection-box">GULF DREDGING</asp:Label>
+            <asp:Label ID="mis3" runat="server" CssClass="connection-box">HEISCO RESOURCES</asp:Label>
+            <asp:Label ID="mis4" runat="server" CssClass="connection-box">HEISCO KSA</asp:Label>
+            <asp:Label ID="mis5" runat="server" CssClass="connection-box">GULF SKY KSA</asp:Label>
         </div>
     </div>
 
@@ -125,11 +125,11 @@
     <div class="section-box">
         <h3>PMMS Connections</h3>
         <div class="connections">
-            <asp:Label ID="pmms1" runat="server" CssClass="connection-box">PMMS 1</asp:Label>
-            <asp:Label ID="pmms2" runat="server" CssClass="connection-box">PMMS 2</asp:Label>
-            <asp:Label ID="pmms3" runat="server" CssClass="connection-box">PMMS 3</asp:Label>
-            <asp:Label ID="pmms4" runat="server" CssClass="connection-box">PMMS 4</asp:Label>
-            <asp:Label ID="pmms5" runat="server" CssClass="connection-box">PMMS 5</asp:Label>
+            <asp:Label ID="pmms1" runat="server" CssClass="connection-box">HEISCO</asp:Label>
+            <asp:Label ID="pmms2" runat="server" CssClass="connection-box">GULF DREDGING</asp:Label>
+            <asp:Label ID="pmms3" runat="server" CssClass="connection-box">HEISCO RESOURCE</asp:Label>
+            <asp:Label ID="pmms4" runat="server" CssClass="connection-box">HEISCO KSA</asp:Label>
+            <asp:Label ID="pmms5" runat="server" CssClass="connection-box">GULF SKY KSA</asp:Label>
         </div>
     </div>
 
@@ -137,9 +137,9 @@
     <div class="section-box">
         <h3>NONERP Connections</h3>
         <div class="connections">
-            <asp:Label ID="nonerp1" runat="server" CssClass="connection-box">NONERP 1</asp:Label>
-            <asp:Label ID="nonerp2" runat="server" CssClass="connection-box">NONERP 2</asp:Label>
-            <asp:Label ID="nonerp3" runat="server" CssClass="connection-box">NONERP 3</asp:Label>
+            <asp:Label ID="nonerp1" runat="server" CssClass="connection-box">SAL</asp:Label>
+            <asp:Label ID="nonerp2" runat="server" CssClass="connection-box">OSR</asp:Label>
+            <asp:Label ID="nonerp3" runat="server" CssClass="connection-box">TRF</asp:Label>
         </div>
     </div>
 </div>

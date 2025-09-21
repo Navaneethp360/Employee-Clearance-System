@@ -29,9 +29,9 @@ namespace MedicalSystem
 
                 string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3"};
                 string[] queries = {
-                    "SELECT ActiveStatus FROM [SAL].[dbo].[UserMaster] WHERE UserID=@EmpID",
-                    "SELECT ActiveStatus FROM [OSR].[dbo].[UserMaster] WHERE UserID=@EmpID",
-                    "SELECT ActiveStatus FROM [TRF_NEW].[dbo].[UserMaster] WHERE UserID=@EmpID"
+                    "SELECT ActiveStatus FROM [SAL].[dbo].[UserMaster] WHERE Remark=@EmpID",
+                    "SELECT ActiveStatus FROM [OSR].[dbo].[UserMaster] WHERE Remark=@EmpID",
+                    "SELECT ActiveStatus FROM [TRF_NEW].[dbo].[UserMaster] WHERE Remark=@EmpID"
                 };
 
                 System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3 };

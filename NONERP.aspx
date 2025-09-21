@@ -118,16 +118,35 @@
     gap: 12px;
 }
 
+.conn-link {
+    display: block;
+    text-decoration: none;  /* remove underline */
+    width: 100%;
+    color: inherit; /* keep text color controlled by the box, not browser defaults */
+}
+
 .connection-box {
+    display: block;
+    width: 100%;
     padding: 15px;
     border-radius: 8px;
     background: rgba(255,255,255,0.3);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.4);
     font-weight: 600;
-    transition: all 0.5s ease;
+    text-align: left; /* left-aligned text */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: #000; /* black text */
 }
 
+/* Hover effect for entire row */
+.connection-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Status colors */
 .connection-box.green {
     background: #d4edda;
     color: #155724;
@@ -145,7 +164,7 @@
 <div class="page-content">
     <div class="page-header">
         <h2>🛡️ Employee Clearance Check - NON-ERP</h2>
-        <p class="section-description">Enter an employee ID to check across all systems. Green indicates no records found.</p>
+        <p class="section-description">Enter an employee ID to check across all systems. Green = inactive, Red = active, Gray = no record.</p>
     </div>
 
     <div class="input-group">
@@ -155,11 +174,31 @@
 
     <asp:Label ID="lblStatus" runat="server" CssClass="status-message"></asp:Label>
 
-    <div class="connections">
+<div class="connections">
+    <a href="javascript:void(0)" onclick="openApp('http://salarycertificate.heisco.com/sal/login.aspx')" class="conn-link">
         <asp:Label ID="conn1" runat="server" CssClass="connection-box">SAL</asp:Label>
+    </a>
+    <a href="javascript:void(0)" onclick="openApp('http://sermgr.heisco.com/ser/login.aspx')" class="conn-link">
         <asp:Label ID="conn2" runat="server" CssClass="connection-box">OSR</asp:Label>
+    </a>
+    <a href="javascript:void(0)" onclick="openApp('http://ess.heisco.com/trf/login.aspx')" class="conn-link">
         <asp:Label ID="conn3" runat="server" CssClass="connection-box">TRF</asp:Label>
-    </div>
+    </a>
 </div>
+
+</div>
+
+
+<script>
+    function openApp(url) {
+        // Hardcoded username and password
+        const user = "admin1";
+        const pass = "adm2103sec";
+
+        const encoded = btoa(`${user}:${pass}`);
+        const sep = url.includes("?") ? "&" : "?";
+        window.open(`${url}${sep}data=${encodeURIComponent(encoded)}`, "_blank");
+    }
+</script>
 
 </asp:Content>

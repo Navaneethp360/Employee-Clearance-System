@@ -40,7 +40,7 @@
 }
 
 .status-message { 
-    display: none; /* hide initially */
+    display: none;
     padding:10px 16px; 
     margin-top:15px; 
     border-radius:6px; 
@@ -64,7 +64,7 @@
     color: #333;
 }
 
-/* ================== Input and Button ================== */
+/* Input & Button */
 .input-group {
     display: flex;
     justify-content: center;
@@ -110,7 +110,7 @@
     background: linear-gradient(135deg, #357ABD 0%, #255A88 100%);
 }
 
-/* ================== Connections ================== */
+/* Connections */
 .connections {
     margin-top: 20px;
     display: flex;
@@ -118,14 +118,30 @@
     gap: 12px;
 }
 
+.conn-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
 .connection-box {
+    display: block;
+    width: 100%;
     padding: 15px;
     border-radius: 8px;
     background: rgba(255,255,255,0.3);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.4);
     font-weight: 600;
-    transition: all 0.5s ease;
+    text-align: left;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: #000;
+}
+
+.connection-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
 .connection-box.green {
@@ -145,7 +161,7 @@
 <div class="page-content">
     <div class="page-header">
         <h2>🛡️ Employee Clearance Check - MIS</h2>
-        <p class="section-description">Enter an employee ID to check across all systems. Green indicates no records found.</p>
+        <p class="section-description">Enter an employee ID to check across all systems. Green indicates records found.</p>
     </div>
 
     <div class="input-group">
@@ -156,11 +172,11 @@
     <asp:Label ID="lblStatus" runat="server" CssClass="status-message"></asp:Label>
 
     <div class="connections">
-        <asp:Label ID="conn1" runat="server" CssClass="connection-box">HEISCO</asp:Label>
-        <asp:Label ID="conn2" runat="server" CssClass="connection-box">GULF DREDGING</asp:Label>
-        <asp:Label ID="conn3" runat="server" CssClass="connection-box">HEISCO RESOURCES</asp:Label>
-        <asp:Label ID="conn4" runat="server" CssClass="connection-box">HEISCO KSA</asp:Label>
-        <asp:Label ID="conn5" runat="server" CssClass="connection-box">GULF SKY KSA</asp:Label>
+        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=heisco_en')" class="conn-link"><asp:Label ID="conn1" runat="server" CssClass="connection-box">HEISCO</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=gdco_en')" class="conn-link"><asp:Label ID="conn2" runat="server" CssClass="connection-box">GULF DREDGING</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=htsco_en')" class="conn-link"><asp:Label ID="conn3" runat="server" CssClass="connection-box">HEISCO RESOURCES</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=hsa_en')" class="conn-link"><asp:Label ID="conn4" runat="server" CssClass="connection-box">HEISCO KSA</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=gulfsky_en')" class="conn-link"><asp:Label ID="conn5" runat="server" CssClass="connection-box">GULF SKY KSA</asp:Label></a>
     </div>
 </div>
 

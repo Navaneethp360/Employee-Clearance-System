@@ -33,8 +33,6 @@ namespace MedicalSystem
                 CheckAndSetLabel(nonerp1, "NONERP_Conn1");
                 CheckAndSetLabel(nonerp2, "NONERP_Conn2");
                 CheckAndSetLabel(nonerp3, "NONERP_Conn3");
-                CheckAndSetLabel(nonerp4, "NONERP_Conn4");
-                CheckAndSetLabel(nonerp5, "NONERP_Conn5");
             }
             catch (Exception ex)
             {

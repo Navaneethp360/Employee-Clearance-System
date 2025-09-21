@@ -27,16 +27,14 @@ namespace MedicalSystem
                 // Reset all connection boxes
                 ResetConnections();
 
-                string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3", "NONERP_Conn4", "NONERP_Conn5" };
+                string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3"};
                 string[] queries = {
-                    "SELECT IsPending FROM Leaves WHERE EmployeeID=@EmpID",
-                    "SELECT IsReturned FROM Assets WHERE EmployeeID=@EmpID",
-                    "SELECT IsCompleted FROM Trainings WHERE EmployeeID=@EmpID",
-                    "SELECT IsSettled FROM Payroll WHERE EmployeeID=@EmpID",
-                    "SELECT IsPendingClearance FROM MedicalRecords WHERE EmployeeID=@EmpID"
+                    "SELECT ActiveStatus FROM [SAL].[dbo].[UserMaster] WHERE UserID=@EmpID",
+                    "SELECT ActiveStatus FROM [OSR].[dbo].[UserMaster] WHERE UserID=@EmpID",
+                    "SELECT ActiveStatus FROM [TRF_NEW].[dbo].[UserMaster] WHERE UserID=@EmpID"
                 };
 
-                System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3, conn4, conn5 };
+                System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3 };
 
                 bool hasPendingItems = false;
                 bool recordFoundAnywhere = false;
@@ -121,8 +119,6 @@ namespace MedicalSystem
             conn1.CssClass = "connection-box";
             conn2.CssClass = "connection-box";
             conn3.CssClass = "connection-box";
-            conn4.CssClass = "connection-box";
-            conn5.CssClass = "connection-box";
         }
     }
 }

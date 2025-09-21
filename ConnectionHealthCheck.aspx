@@ -140,8 +140,6 @@
             <asp:Label ID="nonerp1" runat="server" CssClass="connection-box">NONERP 1</asp:Label>
             <asp:Label ID="nonerp2" runat="server" CssClass="connection-box">NONERP 2</asp:Label>
             <asp:Label ID="nonerp3" runat="server" CssClass="connection-box">NONERP 3</asp:Label>
-            <asp:Label ID="nonerp4" runat="server" CssClass="connection-box">NONERP 4</asp:Label>
-            <asp:Label ID="nonerp5" runat="server" CssClass="connection-box">NONERP 5</asp:Label>
         </div>
     </div>
 </div>

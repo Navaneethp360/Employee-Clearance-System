@@ -156,11 +156,9 @@
     <asp:Label ID="lblStatus" runat="server" CssClass="status-message"></asp:Label>
 
     <div class="connections">
-        <asp:Label ID="conn1" runat="server" CssClass="connection-box">HEISCO</asp:Label>
-        <asp:Label ID="conn2" runat="server" CssClass="connection-box">GULF DREDGING</asp:Label>
-        <asp:Label ID="conn3" runat="server" CssClass="connection-box">HEISCO RESOURCES</asp:Label>
-        <asp:Label ID="conn4" runat="server" CssClass="connection-box">HEISCO KSA</asp:Label>
-        <asp:Label ID="conn5" runat="server" CssClass="connection-box">GULF SKY KSA</asp:Label>
+        <asp:Label ID="conn1" runat="server" CssClass="connection-box">SAL</asp:Label>
+        <asp:Label ID="conn2" runat="server" CssClass="connection-box">OSR</asp:Label>
+        <asp:Label ID="conn3" runat="server" CssClass="connection-box">TRF</asp:Label>
     </div>
 </div>
 

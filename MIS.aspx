@@ -188,12 +188,16 @@
 
     <!-- Links Section -->
     <div class="connections">
-        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=heisco_en')" class="conn-link"><asp:Label ID="conn1" runat="server" CssClass="connection-box">HEISCO</asp:Label></a>
-        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=gdco_en')" class="conn-link"><asp:Label ID="conn2" runat="server" CssClass="connection-box">GULF DREDGING</asp:Label></a>
-        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=htsco_en')" class="conn-link"><asp:Label ID="conn3" runat="server" CssClass="connection-box">HEISCO RESOURCES</asp:Label></a>
-        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=hsa_en')" class="conn-link"><asp:Label ID="conn4" runat="server" CssClass="connection-box">HEISCO KSA</asp:Label></a>
-        <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=gulfsky_en')" class="conn-link"><asp:Label ID="conn5" runat="server" CssClass="connection-box">GULF SKY KSA</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('miserp.heisco.com:7777/forms/frmservlet?config=heisco_en')" class="conn-link"><asp:Label ID="conn1" runat="server" CssClass="connection-box">HEISCO</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('miserp.heisco.com:7777/forms/frmservlet?config=gdco_en')" class="conn-link"><asp:Label ID="conn2" runat="server" CssClass="connection-box">GULF DREDGING</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('miserp.heisco.com:7777/forms/frmservlet?config=htsco_en')" class="conn-link"><asp:Label ID="conn3" runat="server" CssClass="connection-box">HEISCO RESOURCES</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('miserp.heisco.com:7777/forms/frmservlet?config=hsa_en')" class="conn-link"><asp:Label ID="conn4" runat="server" CssClass="connection-box">HEISCO KSA</asp:Label></a>
+        <a href="javascript:void(0)" onclick="openApp('miserp.heisco.com:7777/forms/frmservlet?config=gulfsky_en')" class="conn-link"><asp:Label ID="conn5" runat="server" CssClass="connection-box">GULF SKY KSA</asp:Label></a>
     </div>
 </div>
-
+<script>
+    function openApp(url) {
+        window.open(url, "_blank");
+    }
+</script>
 </asp:Content>

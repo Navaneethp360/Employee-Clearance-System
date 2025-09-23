@@ -40,7 +40,7 @@
 }
 
 .status-message { 
-    display: none; /* hide initially */
+    display: none;
     padding:10px 16px; 
     margin-top:15px; 
     border-radius:6px; 
@@ -64,20 +64,20 @@
     color: #333;
 }
 
-/* ================== Input and Button ================== */
+/* Inputs & Buttons */
 .input-group {
     display: flex;
     justify-content: center;
     margin-top: 20px;
     gap: 15px;
     flex-wrap: wrap;
-    max-width: 600px;
+    max-width: 650px;
     margin-left: auto;
     margin-right: auto;
 }
 
-.txt-input {
-    flex: 1 1 250px;
+.txt-input, .ddl-company {
+    flex: 1 1 200px;
     padding: 12px 16px;
     font-size: 1rem;
     border-radius: 8px;
@@ -86,9 +86,10 @@
     backdrop-filter: blur(12px);
     color: var(--text-main);
     transition: all 0.3s ease;
+    appearance: none;
 }
 
-.txt-input:focus {
+.txt-input:focus, .ddl-company:focus {
     background: rgba(255,255,255,0.45);
     box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
     outline: none;
@@ -110,7 +111,7 @@
     background: linear-gradient(135deg, #357ABD 0%, #255A88 100%);
 }
 
-/* ================== Connections ================== */
+/* Connections */
 .connections {
     margin-top: 20px;
     display: flex;
@@ -120,9 +121,9 @@
 
 .conn-link {
     display: block;
-    text-decoration: none;  /* remove underline */
+    text-decoration: none;
     width: 100%;
-    color: inherit; /* keep text color controlled by the box, not browser defaults */
+    color: inherit;
 }
 
 .connection-box {
@@ -134,13 +135,12 @@
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.4);
     font-weight: 600;
-    text-align: left; /* left-aligned text */
+    text-align: left;
     transition: all 0.3s ease;
     cursor: pointer;
-    color: #000; /* black text */
+    color: #000;
 }
 
-/* Hover effect for entire row */
 .connection-box:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
@@ -164,37 +164,42 @@
 <div class="page-content">
     <div class="page-header">
         <h2>🛡️ Employee Clearance Check - NON-ERP</h2>
-        <p class="section-description">Enter an employee ID to check across all systems. Green = inactive, Red = active, Gray = no record.</p>
+        <p class="section-description">Select company and enter Employee ID to check across all NON-ERP systems.</p>
     </div>
 
     <div class="input-group">
+        <asp:DropDownList ID="ddlCompany" runat="server" CssClass="ddl-company">
+            <asp:ListItem Text="Select Company" Value="" />
+            <asp:ListItem Value="H">HEISCO</asp:ListItem>
+            <asp:ListItem Value="G">GULF DREDGING</asp:ListItem>
+            <asp:ListItem Value="T">HEISCO RESOURCES</asp:ListItem>
+            <asp:ListItem Value="K">HEISCO KSA</asp:ListItem>
+            <asp:ListItem Value="S">GULF SKY KSA</asp:ListItem>
+        </asp:DropDownList>
+
         <asp:TextBox ID="txtEmployeeID" runat="server" CssClass="txt-input" placeholder="Enter Employee ID"></asp:TextBox>
         <asp:Button ID="btnCheckClearance" runat="server" CssClass="btn-clearance" Text="Check Clearance" OnClick="btnCheckClearance_Click" />
     </div>
 
     <asp:Label ID="lblStatus" runat="server" CssClass="status-message"></asp:Label>
 
-<div class="connections">
-    <a href="javascript:void(0)" onclick="openApp('http://salarycertificate.heisco.com/sal/login.aspx')" class="conn-link">
-        <asp:Label ID="conn1" runat="server" CssClass="connection-box">SAL</asp:Label>
-    </a>
-    <a href="javascript:void(0)" onclick="openApp('http://sermgr.heisco.com/ser/login.aspx')" class="conn-link">
-        <asp:Label ID="conn2" runat="server" CssClass="connection-box">OSR</asp:Label>
-    </a>
-    <a href="javascript:void(0)" onclick="openApp('http://ess.heisco.com/trf/login.aspx')" class="conn-link">
-        <asp:Label ID="conn3" runat="server" CssClass="connection-box">TRF</asp:Label>
-    </a>
+    <div class="connections">
+        <a href="javascript:void(0)" onclick="openApp('http://salarycertificate.heisco.com/sal/login.aspx')" class="conn-link">
+            <asp:Label ID="conn1" runat="server" CssClass="connection-box">SAL</asp:Label>
+        </a>
+        <a href="javascript:void(0)" onclick="openApp('http://sermgr.heisco.com/ser/login.aspx')" class="conn-link">
+            <asp:Label ID="conn2" runat="server" CssClass="connection-box">OSR</asp:Label>
+        </a>
+        <a href="javascript:void(0)" onclick="openApp('http://ess.heisco.com/trf/login.aspx')" class="conn-link">
+            <asp:Label ID="conn3" runat="server" CssClass="connection-box">TRF</asp:Label>
+        </a>
+    </div>
 </div>
-
-</div>
-
 
 <script>
     function openApp(url) {
-        // Hardcoded username and password
         const user = "admin1";
         const pass = "adm2103sec";
-
         const encoded = btoa(`${user}:${pass}`);
         const sep = url.includes("?") ? "&" : "?";
         window.open(`${url}${sep}data=${encodeURIComponent(encoded)}`, "_blank");

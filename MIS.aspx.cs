@@ -14,9 +14,11 @@ namespace MedicalSystem
         protected void btnCheckClearance_Click(object sender, EventArgs e)
         {
             string empId = txtEmployeeID.Text.Trim();
-            if (string.IsNullOrEmpty(empId))
+            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // Because first item = "Select Company"
+
+            if (string.IsNullOrEmpty(empId) || selectedCompanyIndex < 0)
             {
-                lblStatus.Text = "❌ Please enter an Employee ID.";
+                lblStatus.Text = "❌ Please select a company and enter an Employee ID.";
                 lblStatus.CssClass = "status-message error";
                 lblStatus.Style["display"] = "block";
                 return;
@@ -24,18 +26,82 @@ namespace MedicalSystem
 
             try
             {
-                // Reset connection boxes
                 ResetConnections();
 
-                // Check each system with its own connection string
-                conn1.CssClass += CheckSystem(empId, "MIS_Conn1", "SELECT COUNT(*) FROM Leaves WHERE EmployeeID=@EmpID AND IsPending=1") ? " green" : " red";
-                conn2.CssClass += CheckSystem(empId, "MIS_Conn2", "SELECT COUNT(*) FROM Assets WHERE EmployeeID=@EmpID AND IsReturned=0") ? " green" : " red";
-                conn3.CssClass += CheckSystem(empId, "MIS_Conn3", "SELECT COUNT(*) FROM Trainings WHERE EmployeeID=@EmpID AND IsCompleted=0") ? " green" : " red";
-                conn4.CssClass += CheckSystem(empId, "MIS_Conn4", "SELECT COUNT(*) FROM Payroll WHERE EmployeeID=@EmpID AND IsSettled=0") ? " green" : " red";
-                conn5.CssClass += CheckSystem(empId, "MIS_Conn5", "SELECT COUNT(*) FROM MedicalRecords WHERE EmployeeID=@EmpID AND IsPendingClearance=1") ? " green" : " red";
+                // Connection names and labels
+                string[] connections = { "MIS_Conn1", "MIS_Conn2", "MIS_Conn3", "MIS_Conn4", "MIS_Conn5" };
+                System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3, conn4, conn5 };
 
-                lblStatus.Text = "✅ Clearance check completed!";
-                lblStatus.CssClass = "status-message";
+                // Query templates
+                string queryParent = "SELECT IS_ACTIVE FROM OracleLinkedServer..HEISCO.V_HEISCO_EMPLOYEE_ACCESS WHERE EMPFNO=@EmpID";
+                string queryOthers = "SELECT IS_ACTIVE FROM OracleLinkedServer..HEISCO.V_HEISCO_EMPLOYEE_ACCESS WHERE EMPFID=@EmpID OR EMPFBP=@EmpID";
+
+                bool inactiveFound = true;
+                bool recordFoundAnywhere = false;
+
+                for (int i = 0; i < connections.Length; i++)
+                {
+                    try
+                    {
+                        string connStr = ConfigurationManager.ConnectionStrings[connections[i]].ConnectionString;
+                        SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr)
+                        {
+                            ConnectTimeout = 5
+                        };
+
+                        using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
+                        using (SqlCommand cmd = new SqlCommand((i == selectedCompanyIndex) ? queryParent : queryOthers, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@EmpID", empId);
+                            cmd.CommandTimeout = 5;
+                            conn.Open();
+
+                            object result = cmd.ExecuteScalar();
+
+                            if (result == null || result == DBNull.Value)
+                            {
+                                labels[i].CssClass += " gray"; // No record found → Gray
+                            }
+                            else
+                            {
+                                recordFoundAnywhere = true;
+                                string status = result.ToString().Trim();
+
+                                if (status == "0")  // Assuming 0 = inactive
+                                {
+                                    labels[i].CssClass += " red"; // inactive → Red
+                                }
+                                else
+                                {
+                                    labels[i].CssClass += " green"; // active → Green
+                                    inactiveFound = false;
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        labels[i].CssClass += " gray"; // Connection failure → Gray
+                    }
+                }
+
+                // Final status message
+                if (!recordFoundAnywhere)
+                {
+                    lblStatus.Text = "⚪ Employee record not found in any MIS system.";
+                    lblStatus.CssClass = "status-message error";
+                }
+                else if (!inactiveFound)
+                {
+                    lblStatus.Text = "⚠️ Employee account is still active in one or more systems.";
+                    lblStatus.CssClass = "status-message error";
+                }
+                else
+                {
+                    lblStatus.Text = "✅ Employee exists and all accounts are inactive.";
+                    lblStatus.CssClass = "status-message success";
+                }
+
                 lblStatus.Style["display"] = "block";
             }
             catch (Exception ex)
@@ -46,7 +112,6 @@ namespace MedicalSystem
             }
         }
 
-        // Reset connection boxes to default
         private void ResetConnections()
         {
             conn1.CssClass = "connection-box";
@@ -55,27 +120,5 @@ namespace MedicalSystem
             conn4.CssClass = "connection-box";
             conn5.CssClass = "connection-box";
         }
-
-        // Generic method to check any system with its connection string and query
-        private bool CheckSystem(string empId, string connStrName, string query)
-        {
-            string connStr = ConfigurationManager.ConnectionStrings[connStrName].ConnectionString;
-
-            // Add timeout if not already present
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr)
-            {
-                ConnectTimeout = 5 // 5 seconds timeout
-            };
-
-            using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@EmpID", empId);
-                conn.Open();
-                int count = Convert.ToInt32(cmd.ExecuteScalar());
-                return count == 0; // green if no pending items
-            }
-        }
-
     }
 }

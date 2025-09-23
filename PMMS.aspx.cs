@@ -13,10 +13,14 @@ namespace MedicalSystem
 
         protected void btnCheckClearance_Click(object sender, EventArgs e)
         {
-            string empId = txtEmployeeID.Text.Trim();
-            if (string.IsNullOrEmpty(empId))
+            // Prepend dropdown value before Employee ID
+            string prefix = ddlCompany.SelectedValue.Trim();
+            string empId = prefix + txtEmployeeID.Text.Trim();
+            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // Because first item = "Select Company"
+
+            if (string.IsNullOrEmpty(empId) || selectedCompanyIndex < 0)
             {
-                lblStatus.Text = "❌ Please enter an Employee ID.";
+                lblStatus.Text = "❌ Please select a company and enter an Employee ID.";
                 lblStatus.CssClass = "status-message error";
                 lblStatus.Style["display"] = "block";
                 return;
@@ -88,12 +92,12 @@ namespace MedicalSystem
                 }
                 else if (hasActiveAccount)
                 {
-                    lblStatus.Text = "⚠️ The employee has an active account in one or more PMMS systems.";
+                    lblStatus.Text = "⚠️ Employee has pending clearance items in one or more PMMS systems.";
                     lblStatus.CssClass = "status-message error";
                 }
                 else
                 {
-                    lblStatus.Text = "✅ The employee exists but all accounts are inactive.";
+                    lblStatus.Text = "✅ Employee exists and has no pending clearance items. All accounts are inactive.";
                     lblStatus.CssClass = "status-message success";
                 }
 

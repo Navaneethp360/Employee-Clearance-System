@@ -3,12 +3,15 @@
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\ECS_Release</_PublishTargetUrl>
-    <History>True|2025-09-21T06:54:42.7886065Z||;True|2025-09-21T09:31:12.3743832+03:00||;True|2025-09-21T09:28:19.8757155+03:00||;True|2025-09-21T09:14:12.7198279+03:00||;True|2025-09-18T15:05:11.8457608+03:00||;True|2025-09-18T14:55:07.9070751+03:00||;True|2025-09-18T14:28:01.5930479+03:00||;True|2025-09-18T12:14:39.7702607+03:00||;True|2025-09-18T12:14:05.9972719+03:00||;True|2025-09-18T12:13:54.4382471+03:00||;</History>
+    <History>True|2025-09-22T06:07:00.7790109Z||;True|2025-09-21T14:57:32.1982618+03:00||;True|2025-09-21T14:50:28.3966569+03:00||;True|2025-09-21T09:54:42.7886065+03:00||;True|2025-09-21T09:31:12.3743832+03:00||;True|2025-09-21T09:28:19.8757155+03:00||;True|2025-09-21T09:14:12.7198279+03:00||;True|2025-09-18T15:05:11.8457608+03:00||;True|2025-09-18T14:55:07.9070751+03:00||;True|2025-09-18T14:28:01.5930479+03:00||;True|2025-09-18T12:14:39.7702607+03:00||;True|2025-09-18T12:14:05.9972719+03:00||;True|2025-09-18T12:13:54.4382471+03:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
     <File Include=".gitignore">
       <publishTime>09/21/2025 08:54:33</publishTime>
+    </File>
+    <File Include="ActiveDirectoryCheck.aspx">
+      <publishTime>09/21/2025 14:47:06</publishTime>
     </File>
     <File Include="bin/Antlr3.Runtime.dll">
       <publishTime>04/24/2025 11:21:38</publishTime>
@@ -20,10 +23,10 @@
       <publishTime>04/24/2025 11:21:38</publishTime>
     </File>
     <File Include="bin/BCrypt.Net-Next.dll">
-      <publishTime>03/10/2020 14:13:50</publishTime>
+      <publishTime>10/03/2020 14:13:50</publishTime>
     </File>
     <File Include="bin/BouncyCastle.Crypto.dll">
-      <publishTime>12/08/2020 21:05:32</publishTime>
+      <publishTime>08/12/2020 21:05:32</publishTime>
     </File>
     <File Include="bin/BouncyCastle.Cryptography.dll">
       <publishTime>05/22/2025 09:48:24</publishTime>
@@ -35,10 +38,10 @@
       <publishTime>06/13/2024 15:05:22</publishTime>
     </File>
     <File Include="bin/MedicalSystem.dll">
-      <publishTime>09/21/2025 09:32:21</publishTime>
+      <publishTime>09/22/2025 09:06:49</publishTime>
     </File>
     <File Include="bin/MedicalSystem.pdb">
-      <publishTime>09/21/2025 09:32:21</publishTime>
+      <publishTime>09/22/2025 09:06:49</publishTime>
     </File>
     <File Include="bin/Microsoft.AspNet.FriendlyUrls.dll">
       <publishTime>04/24/2025 11:21:38</publishTime>
@@ -275,7 +278,7 @@
       <publishTime>04/24/2025 11:21:37</publishTime>
     </File>
     <File Include="CustomContacts.aspx">
-      <publishTime>09/03/2025 12:59:19</publishTime>
+      <publishTime>03/09/2025 12:59:19</publishTime>
     </File>
     <File Include="favicon.ico">
       <publishTime>04/24/2025 11:21:38</publishTime>
@@ -296,10 +299,10 @@
       <publishTime>09/21/2025 09:51:46</publishTime>
     </File>
     <File Include="NONERP.aspx">
-      <publishTime>09/21/2025 09:46:15</publishTime>
+      <publishTime>09/21/2025 16:12:47</publishTime>
     </File>
     <File Include="PMMS.aspx">
-      <publishTime>09/21/2025 09:50:13</publishTime>
+      <publishTime>09/21/2025 16:09:22</publishTime>
     </File>
     <File Include="ScreenManagement.aspx">
       <publishTime>08/19/2025 15:30:01</publishTime>

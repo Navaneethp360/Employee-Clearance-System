@@ -13,10 +13,14 @@ namespace MedicalSystem
 
         protected void btnCheckClearance_Click(object sender, EventArgs e)
         {
-            string empId = txtEmployeeID.Text.Trim();
-            if (string.IsNullOrEmpty(empId))
+            // Prepend dropdown value with '-' before Employee ID
+            string prefix = ddlCompany.SelectedValue.Trim();
+            string empId = prefix + "-" + txtEmployeeID.Text.Trim();
+            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // Because first item = "Select Company"
+
+            if (string.IsNullOrEmpty(empId) || selectedCompanyIndex < 0)
             {
-                lblStatus.Text = "❌ Please enter an Employee ID.";
+                lblStatus.Text = "❌ Please select a company and enter an Employee ID.";
                 lblStatus.CssClass = "status-message error";
                 lblStatus.Style["display"] = "block";
                 return;
@@ -27,7 +31,7 @@ namespace MedicalSystem
                 // Reset all connection boxes
                 ResetConnections();
 
-                string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3"};
+                string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3" };
                 string[] queries = {
                     "SELECT ActiveStatus FROM [SAL].[dbo].[UserMaster] WHERE Remark=@EmpID",
                     "SELECT ActiveStatus FROM [OSR].[dbo].[UserMaster] WHERE Remark=@EmpID",
@@ -67,7 +71,7 @@ namespace MedicalSystem
                                 recordFoundAnywhere = true;
                                 int status = Convert.ToInt32(result);
 
-                                // For each query: 0 means cleared, 1 means pending
+                                // For each query: 0 = cleared, 1 = pending
                                 if (status == 1)
                                 {
                                     labels[i].CssClass += " green";
@@ -89,17 +93,17 @@ namespace MedicalSystem
                 // Overall status message
                 if (!recordFoundAnywhere)
                 {
-                    lblStatus.Text = "⚪ Employee record not found in any NONERP system.";
+                    lblStatus.Text = "⚪ Employee record not found in any NON-ERP system.";
                     lblStatus.CssClass = "status-message error";
                 }
                 else if (hasPendingItems)
                 {
-                    lblStatus.Text = "⚠️ Employee has pending clearance items in one or more NONERP systems.";
+                    lblStatus.Text = "⚠️ Employee has pending clearance items in one or more NON-ERP systems.";
                     lblStatus.CssClass = "status-message error";
                 }
                 else
                 {
-                    lblStatus.Text = "✅ Employee exists and has no pending clearance items.";
+                    lblStatus.Text = "✅ Employee exists and has no pending clearance items. All accounts are inactive.";
                     lblStatus.CssClass = "status-message success";
                 }
 

@@ -39,6 +39,12 @@
     align-items: center;
 }
 
+.section-description {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
 .status-message { 
     display: none;
     padding:10px 16px; 
@@ -58,12 +64,6 @@
     border-color:#f5c6cb; 
 }
 
-.section-description {
-    margin-top: 6px;
-    font-size: 0.9rem;
-    color: #333;
-}
-
 /* Input & Button */
 .input-group {
     display: flex;
@@ -71,13 +71,13 @@
     margin-top: 20px;
     gap: 15px;
     flex-wrap: wrap;
-    max-width: 600px;
+    max-width: 650px;
     margin-left: auto;
     margin-right: auto;
 }
 
-.txt-input {
-    flex: 1 1 250px;
+.txt-input, .ddl-company {
+    flex: 1 1 200px;
     padding: 12px 16px;
     font-size: 1rem;
     border-radius: 8px;
@@ -86,9 +86,10 @@
     backdrop-filter: blur(12px);
     color: var(--text-main);
     transition: all 0.3s ease;
+    appearance: none;
 }
 
-.txt-input:focus {
+.txt-input:focus, .ddl-company:focus {
     background: rgba(255,255,255,0.45);
     box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
     outline: none;
@@ -109,6 +110,7 @@
 .btn-clearance:hover {
     background: linear-gradient(135deg, #357ABD 0%, #255A88 100%);
 }
+
 
 /* Connections Section */
 .connections {
@@ -163,10 +165,19 @@
 <div class="page-content">
     <div class="page-header">
         <h2>🛡️ Employee Clearance Check - PMMS</h2>
-        <p class="section-description">Enter an employee ID to check across all systems. Green indicates records found.</p>
+        <p class="section-description">Select company and enter employee ID to check across systems. Green indicates records found.</p>
     </div>
 
     <div class="input-group">
+        <asp:DropDownList ID="ddlCompany" runat="server" CssClass="ddl-company">
+            <asp:ListItem Text="Select Company" Value="" />
+            <asp:ListItem Value="H">HEISCO</asp:ListItem>
+            <asp:ListItem Value="G">GULF DREDGING</asp:ListItem>
+            <asp:ListItem Value="T">HEISCO RESOURCES</asp:ListItem>
+            <asp:ListItem Value="K">HEISCO KSA</asp:ListItem>
+            <asp:ListItem Value="S">GULF SKY KSA</asp:ListItem>
+        </asp:DropDownList>
+
         <asp:TextBox ID="txtEmployeeID" runat="server" CssClass="txt-input" placeholder="Enter Employee ID"></asp:TextBox>
         <asp:Button ID="btnCheckClearance" runat="server" CssClass="btn-clearance" Text="Check Clearance" OnClick="btnCheckClearance_Click" />
     </div>

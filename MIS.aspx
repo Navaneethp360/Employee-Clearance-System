@@ -71,13 +71,13 @@
     margin-top: 20px;
     gap: 15px;
     flex-wrap: wrap;
-    max-width: 600px;
+    max-width: 650px;
     margin-left: auto;
     margin-right: auto;
 }
 
-.txt-input {
-    flex: 1 1 250px;
+.txt-input, .ddl-company {
+    flex: 1 1 200px;
     padding: 12px 16px;
     font-size: 1rem;
     border-radius: 8px;
@@ -86,9 +86,10 @@
     backdrop-filter: blur(12px);
     color: var(--text-main);
     transition: all 0.3s ease;
+    appearance: none;
 }
 
-.txt-input:focus {
+.txt-input:focus, .ddl-company:focus {
     background: rgba(255,255,255,0.45);
     box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
     outline: none;
@@ -161,16 +162,31 @@
 <div class="page-content">
     <div class="page-header">
         <h2>🛡️ Employee Clearance Check - MIS</h2>
-        <p class="section-description">Enter an employee ID to check across all systems. Green indicates records found.</p>
+        <p class="section-description">Select company and enter employee ID to check across all systems.</p>
     </div>
 
     <div class="input-group">
+        <!-- Company Dropdown -->
+        <asp:DropDownList ID="ddlCompany" runat="server" CssClass="ddl-company">
+            <asp:ListItem Text="Select Company" Value="" />
+            <asp:ListItem Text="HEISCO" Value="HEISCO" />
+            <asp:ListItem Text="GULF DREDGING" Value="GDCO" />
+            <asp:ListItem Text="HEISCO RESOURCES" Value="HTSCO" />
+            <asp:ListItem Text="HEISCO KSA" Value="HSA" />
+            <asp:ListItem Text="GULF SKY KSA" Value="GULFSKY" />
+        </asp:DropDownList>
+
+        <!-- Employee ID input -->
         <asp:TextBox ID="txtEmployeeID" runat="server" CssClass="txt-input" placeholder="Enter Employee ID"></asp:TextBox>
+
+        <!-- Check button -->
         <asp:Button ID="btnCheckClearance" runat="server" CssClass="btn-clearance" Text="Check Clearance" OnClick="btnCheckClearance_Click" />
     </div>
 
+    <!-- Status message -->
     <asp:Label ID="lblStatus" runat="server" CssClass="status-message"></asp:Label>
 
+    <!-- Links Section -->
     <div class="connections">
         <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=heisco_en')" class="conn-link"><asp:Label ID="conn1" runat="server" CssClass="connection-box">HEISCO</asp:Label></a>
         <a href="javascript:void(0)" onclick="openApp('http://miserp.heisco.com:7777/forms/frmservlet?config=gdco_en')" class="conn-link"><asp:Label ID="conn2" runat="server" CssClass="connection-box">GULF DREDGING</asp:Label></a>

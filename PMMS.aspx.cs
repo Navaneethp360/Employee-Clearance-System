@@ -16,7 +16,7 @@ namespace MedicalSystem
             // Prepend dropdown value before Employee ID
             string prefix = ddlCompany.SelectedValue.Trim();
             string empId = prefix + txtEmployeeID.Text.Trim();
-            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // Because first item = "Select Company"
+            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // first item = "Select Company"
 
             if (string.IsNullOrEmpty(empId) || selectedCompanyIndex < 0)
             {
@@ -28,13 +28,14 @@ namespace MedicalSystem
 
             try
             {
-                // Reset all connection boxes
                 ResetConnections();
 
-                string userCheckQuery = "SELECT ActiveStatus FROM [TAS].[dbo].[Users] WHERE EmployeeID=@EmpID";
+                // Query to get ActiveStatus and EmployeeName
+                string userCheckQuery = "SELECT ActiveStatus, EmployeeName FROM [TAS].[dbo].[Users] WHERE EmployeeID=@EmpID";
 
                 string[] connections = { "PMMS_Conn1", "PMMS_Conn2", "PMMS_Conn3", "PMMS_Conn4", "PMMS_Conn5" };
                 System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3, conn4, conn5 };
+                string[] companyNames = { "HEISCO", "GULF DREDGING", "HEISCO RESOURCES", "HEISCO KSA", "GULF SKY KSA" };
 
                 bool hasActiveAccount = false;
                 bool recordFoundAnywhere = false;
@@ -43,44 +44,55 @@ namespace MedicalSystem
                 {
                     try
                     {
-                        // Get connection string and add 5-second timeout
                         string connStr = ConfigurationManager.ConnectionStrings[connections[i]].ConnectionString;
                         SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr)
                         {
-                            ConnectTimeout = 5 // 5 seconds
+                            ConnectTimeout = 5
                         };
 
                         using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
                         using (SqlCommand cmd = new SqlCommand(userCheckQuery, conn))
                         {
                             cmd.Parameters.AddWithValue("@EmpID", empId);
-                            cmd.CommandTimeout = 5; // optional, command timeout
+                            cmd.CommandTimeout = 5;
                             conn.Open();
-                            object result = cmd.ExecuteScalar();
 
-                            if (result == null)
+                            using (SqlDataReader reader = cmd.ExecuteReader())
                             {
-                                labels[i].CssClass += " gray"; // record not found
-                            }
-                            else
-                            {
-                                recordFoundAnywhere = true;
-                                int status = Convert.ToInt32(result);
-                                if (status == 1)
+                                if (!reader.HasRows)
                                 {
-                                    labels[i].CssClass += " green"; // active
-                                    hasActiveAccount = true;
+                                    labels[i].CssClass += " gray";
+                                    labels[i].Text = $"{companyNames[i]}: No record found";
                                 }
                                 else
                                 {
-                                    labels[i].CssClass += " red"; // inactive
+                                    recordFoundAnywhere = true;
+                                    reader.Read();
+
+                                    int status = Convert.ToInt32(reader["ActiveStatus"]);
+                                    string empName = reader["EmployeeName"].ToString().Trim();
+
+                                    // Set color based on ActiveStatus
+                                    if (status == 1) // Active
+                                    {
+                                        labels[i].CssClass += " green";
+                                        hasActiveAccount = true;
+                                    }
+                                    else // Inactive
+                                    {
+                                        labels[i].CssClass += " red";
+                                    }
+
+                                    // Show Company + Employee Name
+                                    labels[i].Text = $"{companyNames[i]}: {empName}";
                                 }
                             }
                         }
                     }
                     catch
                     {
-                        labels[i].CssClass += " gray"; // treat connection failure as record not found
+                        labels[i].CssClass += " gray";
+                        labels[i].Text = $"{companyNames[i]}: Connection failed";
                     }
                 }
 
@@ -110,6 +122,7 @@ namespace MedicalSystem
                 lblStatus.Style["display"] = "block";
             }
         }
+
 
         // Reset connection boxes to default
         private void ResetConnections()

@@ -120,7 +120,7 @@
 
 .connection-box {
     display: block;
-    width: 100%;
+    width: 98%;
     padding: 15px;
     border-radius: 8px;
     background: rgba(255,255,255,0.3);

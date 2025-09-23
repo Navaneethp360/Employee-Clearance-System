@@ -128,7 +128,7 @@
 
 .connection-box {
     display: block;
-    width: 100%;
+    width: 98%;
     padding: 15px;
     border-radius: 8px;
     background: rgba(255,255,255,0.3);
@@ -185,25 +185,25 @@
 
     <div class="connections">
         <a href="javascript:void(0)" onclick="openApp('http://salarycertificate.heisco.com/sal/login.aspx')" class="conn-link">
-            <asp:Label ID="conn1" runat="server" CssClass="connection-box">SAL</asp:Label>
+            <asp:Label ID="conn1" runat="server" CssClass="connection-box">Salary Certificate</asp:Label>
         </a>
         <a href="javascript:void(0)" onclick="openApp('http://sermgr.heisco.com/ser/login.aspx')" class="conn-link">
-            <asp:Label ID="conn2" runat="server" CssClass="connection-box">OSR</asp:Label>
+            <asp:Label ID="conn2" runat="server" CssClass="connection-box">Facilities Management</asp:Label>
         </a>
         <a href="javascript:void(0)" onclick="openApp('http://ess.heisco.com/trf/login.aspx')" class="conn-link">
-            <asp:Label ID="conn3" runat="server" CssClass="connection-box">TRF</asp:Label>
+            <asp:Label ID="conn3" runat="server" CssClass="connection-box">Employee Training (TRF)</asp:Label>
         </a>
     </div>
 </div>
 
-<%--<script>
+<script>
     function openApp(url) {
-        const user = "admin1";
-        const pass = "adm2103sec";
+        const user = "";
+        const pass = "";
         const encoded = btoa(`${user}:${pass}`);
         const sep = url.includes("?") ? "&" : "?";
         window.open(`${url}${sep}data=${encodeURIComponent(encoded)}`, "_blank");
     }
-</script>--%>
+</script>
 
 </asp:Content>

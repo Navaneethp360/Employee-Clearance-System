@@ -129,7 +129,7 @@
 
 .connection-box {
     display: block;
-    width: 100%;
+    width: 98%;
     padding: 15px;
     border-radius: 8px;
     background: rgba(255,255,255,0.3);
@@ -193,14 +193,14 @@
     </div>
 </div>
 
-<%--<script>
+<script>
     function openApp(url) {
-        const username = "admin1"; // hardcoded username
-        const password = "adm2103sec"; // hardcoded password
+        const username = ""; // hardcoded username
+        const password = ""; // hardcoded password
         const encoded = btoa(username + ":" + password);
         const sep = url.includes("?") ? "&" : "?";
         window.open(url + sep + "data=" + encodeURIComponent(encoded), "_blank");
     }
-</script>--%>
+</script>
 
 </asp:Content>

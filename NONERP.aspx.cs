@@ -33,11 +33,12 @@ namespace MedicalSystem
 
                 string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3" };
                 string[] queries = {
-                    "SELECT ActiveStatus FROM [SAL].[dbo].[UserMaster] WHERE Remark=@EmpID",
-                    "SELECT ActiveStatus FROM [OSR].[dbo].[UserMaster] WHERE Remark=@EmpID",
-                    "SELECT ActiveStatus FROM [TRF_NEW].[dbo].[UserMaster] WHERE Remark=@EmpID"
-                };
+            "SELECT ActiveStatus, UserName FROM [SAL].[dbo].[UserMaster] WHERE Remark=@EmpID",
+            "SELECT ActiveStatus, UserName FROM [OSR].[dbo].[UserMaster] WHERE Remark=@EmpID",
+            "SELECT ActiveStatus, UserName FROM [TRF_NEW].[dbo].[UserMaster] WHERE Remark=@EmpID"
+        };
 
+                string[] systemNames = { "SAL", "OSR", "TRF" };
                 System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3 };
 
                 bool hasPendingItems = false;
@@ -47,7 +48,6 @@ namespace MedicalSystem
                 {
                     try
                     {
-                        // Add 5-second timeout
                         string connStr = ConfigurationManager.ConnectionStrings[connections[i]].ConnectionString;
                         SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr)
                         {
@@ -58,35 +58,45 @@ namespace MedicalSystem
                         using (SqlCommand cmd = new SqlCommand(queries[i], conn))
                         {
                             cmd.Parameters.AddWithValue("@EmpID", empId);
-                            cmd.CommandTimeout = 5; // query timeout
+                            cmd.CommandTimeout = 5;
                             conn.Open();
 
-                            object result = cmd.ExecuteScalar();
-                            if (result == null)
+                            using (SqlDataReader reader = cmd.ExecuteReader())
                             {
-                                labels[i].CssClass += " gray"; // record not found
-                            }
-                            else
-                            {
-                                recordFoundAnywhere = true;
-                                int status = Convert.ToInt32(result);
-
-                                // For each query: 0 = cleared, 1 = pending
-                                if (status == 1)
+                                if (!reader.HasRows)
                                 {
-                                    labels[i].CssClass += " green";
-                                    hasPendingItems = true;
+                                    labels[i].CssClass += " gray";
+                                    labels[i].Text = $"{systemNames[i]}: No record found";
                                 }
                                 else
                                 {
-                                    labels[i].CssClass += " red";
+                                    recordFoundAnywhere = true;
+                                    reader.Read();
+
+                                    int status = Convert.ToInt32(reader["ActiveStatus"]);
+                                    string userName = reader["UserName"].ToString().Trim();
+
+                                    // Color: 1 = pending (green), 0 = cleared (red)
+                                    if (status == 1)
+                                    {
+                                        labels[i].CssClass += " green";
+                                        hasPendingItems = true;
+                                    }
+                                    else
+                                    {
+                                        labels[i].CssClass += " red";
+                                    }
+
+                                    // Show system name + username
+                                    labels[i].Text = $"{systemNames[i]}: {userName}";
                                 }
                             }
                         }
                     }
                     catch
                     {
-                        labels[i].CssClass += " gray"; // timeout or failure → gray
+                        labels[i].CssClass += " gray";
+                        labels[i].Text = $"{systemNames[i]}: Connection failed";
                     }
                 }
 
@@ -116,6 +126,7 @@ namespace MedicalSystem
                 lblStatus.Style["display"] = "block";
             }
         }
+
 
         // Reset all boxes before checking
         private void ResetConnections()

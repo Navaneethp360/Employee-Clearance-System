@@ -14,7 +14,7 @@ namespace MedicalSystem
         protected void btnCheckClearance_Click(object sender, EventArgs e)
         {
             string empId = txtEmployeeID.Text.Trim();
-            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // Because first item = "Select Company"
+            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // First item = "Select Company"
 
             if (string.IsNullOrEmpty(empId) || selectedCompanyIndex < 0)
             {
@@ -32,9 +32,18 @@ namespace MedicalSystem
                 string[] connections = { "MIS_Conn1", "MIS_Conn2", "MIS_Conn3", "MIS_Conn4", "MIS_Conn5" };
                 System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3, conn4, conn5 };
 
+                // Views for each company
+                string[] views = {
+            "HEISCO.V_HEISCO_EMPLOYEE_ACCESS",    // HEISCO Kuwait
+            "GDCO.V_GDCO_EMPLOYEE_ACCESS",        // Gulf Dredging
+            "HTSCO.V_HTSCO_EMPLOYEE_ACCESS",      // HEISCO Resource Kuwait
+            "HSA.V_HSA_EMPLOYEE_ACCESS",          // HEISCO KSA
+            "GULFSKY.V_GULFSKY_EMPLOYEE_ACCESS"   // GulfSky KSA
+        };
+
                 // Query templates
-                string queryParent = "SELECT IS_ACTIVE FROM OracleLinkedServer..HEISCO.V_HEISCO_EMPLOYEE_ACCESS WHERE EMPFNO=@EmpID";
-                string queryOthers = "SELECT IS_ACTIVE FROM OracleLinkedServer..HEISCO.V_HEISCO_EMPLOYEE_ACCESS WHERE EMPFID=@EmpID OR EMPFBP=@EmpID";
+                string queryParentTemplate = "SELECT IS_ACTIVE FROM OracleLinkedServer..{0} WHERE EMPFNO=@EmpID";
+                string queryOthersTemplate = "SELECT IS_ACTIVE FROM OracleLinkedServer..{0} WHERE EMPFID=@EmpID OR EMPFBP=@EmpID";
 
                 bool inactiveFound = true;
                 bool recordFoundAnywhere = false;
@@ -49,31 +58,32 @@ namespace MedicalSystem
                             ConnectTimeout = 5
                         };
 
+                        string query = (i == selectedCompanyIndex)
+                            ? string.Format(queryParentTemplate, views[i])   // primary company
+                            : string.Format(queryOthersTemplate, views[i]);  // other companies
+
                         using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
-                        using (SqlCommand cmd = new SqlCommand((i == selectedCompanyIndex) ? queryParent : queryOthers, conn))
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
                             cmd.Parameters.AddWithValue("@EmpID", empId);
                             cmd.CommandTimeout = 5;
                             conn.Open();
 
                             object result = cmd.ExecuteScalar();
-
                             if (result == null || result == DBNull.Value)
                             {
-                                labels[i].CssClass += " gray"; // No record found → Gray
+                                labels[i].CssClass += " gray"; // No record
                             }
                             else
                             {
                                 recordFoundAnywhere = true;
                                 string status = result.ToString().Trim();
 
-                                if (status == "0")  // Assuming 0 = inactive
+                                if (status == "0")  // Inactive
+                                    labels[i].CssClass += " red";
+                                else                  // Active
                                 {
-                                    labels[i].CssClass += " red"; // inactive → Red
-                                }
-                                else
-                                {
-                                    labels[i].CssClass += " green"; // active → Green
+                                    labels[i].CssClass += " green";
                                     inactiveFound = false;
                                 }
                             }
@@ -81,11 +91,11 @@ namespace MedicalSystem
                     }
                     catch
                     {
-                        labels[i].CssClass += " gray"; // Connection failure → Gray
+                        labels[i].CssClass += " gray"; // Connection failed
                     }
                 }
 
-                // Final status message
+                // Final status
                 if (!recordFoundAnywhere)
                 {
                     lblStatus.Text = "⚪ Employee record not found in any MIS system.";
@@ -111,6 +121,7 @@ namespace MedicalSystem
                 lblStatus.Style["display"] = "block";
             }
         }
+
 
         private void ResetConnections()
         {

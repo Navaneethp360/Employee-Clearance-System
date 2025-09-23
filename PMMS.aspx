@@ -193,7 +193,7 @@
     </div>
 </div>
 
-<script>
+<%--<script>
     function openApp(url) {
         const username = "admin1"; // hardcoded username
         const password = "adm2103sec"; // hardcoded password
@@ -201,6 +201,6 @@
         const sep = url.includes("?") ? "&" : "?";
         window.open(url + sep + "data=" + encodeURIComponent(encoded), "_blank");
     }
-</script>
+</script>--%>
 
 </asp:Content>

@@ -5,7 +5,7 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Medical System - Login</title>
+    <title>Employee Clearance - Login</title>
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
     <script type="text/javascript">
         function validateLoginForm() {
@@ -409,19 +409,19 @@ body::before {
 <div class="login-branding" style="text-align: center; align-items:center">
     <img src="https://img.icons8.com/color/96/000000/company.png" alt="Company Logo" style="height: 90px; width: 70px; margin-bottom: 15px;">
     <div class="login-logo">Employee Clearance System</div>
-    <div class="login-tagline">Employee Clearance System</div>
+    <div class="login-tagline">Smooth and Streamlined employee clearance</div>
     <div class="login-features">
         <div class="feature-item">
             <div class="feature-icon">✓</div>
-            <div>Employee Clearance System</div>
+            <div>Verify active users</div>
         </div>
         <div class="feature-item">
             <div class="feature-icon">✓</div>
-            <div>Employee Clearance System</div>
+            <div>Ensure clearance compliance</div>
         </div>
         <div class="feature-item">
             <div class="feature-icon">✓</div>
-            <div>Employee Clearance System</div>
+            <div>Manage accounts</div>
         </div>
     </div>
 </div>

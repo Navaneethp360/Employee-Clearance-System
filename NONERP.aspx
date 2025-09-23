@@ -196,7 +196,7 @@
     </div>
 </div>
 
-<script>
+<%--<script>
     function openApp(url) {
         const user = "admin1";
         const pass = "adm2103sec";
@@ -204,6 +204,6 @@
         const sep = url.includes("?") ? "&" : "?";
         window.open(`${url}${sep}data=${encodeURIComponent(encoded)}`, "_blank");
     }
-</script>
+</script>--%>
 
 </asp:Content>

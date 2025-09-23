@@ -59,9 +59,9 @@
             <img src="https://img.icons8.com/color/48/000000/folder-invoices.png" alt="Module 1" />
         </div>
         <div class="stat-content">
-            <h3>Module 1</h3>
-            <p>Generic description for module 1</p>
-            <a href="#" class="stat-link">Go to Module</a>
+            <h3>Active Directory</h3>
+            <p>Check if user is active/disabled in Active Directory</p>
+            <a href="ActiveDirectoryCheck.aspx" class="stat-link">Go to Module</a>
         </div>
     </div>
     <div class="stat-card glass">
@@ -69,9 +69,9 @@
             <img src="https://img.icons8.com/color/48/000000/folder-invoices.png" alt="Module 2" />
         </div>
         <div class="stat-content">
-            <h3>Module 2</h3>
-            <p>Generic description for module 2</p>
-            <a href="#" class="stat-link">Go to Module</a>
+            <h3>MIS</h3>
+            <p>Check if user is active/disabled in MIS</p>
+            <a href="MIS.aspx" class="stat-link">Go to Module</a>
         </div>
     </div>
     <div class="stat-card glass">
@@ -79,9 +79,9 @@
             <img src="https://img.icons8.com/color/48/000000/folder-invoices.png" alt="Module 3" />
         </div>
         <div class="stat-content">
-            <h3>Module 3</h3>
-            <p>Generic description for module 3</p>
-            <a href="#" class="stat-link">Go to Module</a>
+            <h3>PMMS</h3>
+            <p>Check if user is active/disabled in PMMS</p>
+            <a href="PMMS.aspx" class="stat-link">Go to Module</a>
         </div>
     </div>
 </div>
@@ -93,16 +93,16 @@
                 <div class="activity-card glass">
                     <h3>Actions</h3>
                     <ul class="action-list">
-                        <li><a href="#"><i class="action-icon">➕</i> Action 1</a></li>
-                        <li><a href="#"><i class="action-icon">📋</i> Action 2</a></li>
-                        <li><a href="#"><i class="action-icon">📊</i> Action 3</a></li>
-                        <li><a href="#"><i class="action-icon">⚙️</i> Action 4</a></li>
+                        <li><a href="ActiveDirectoryCheck.aspx"><i class="action-icon">➕</i> Active Directory</a></li>
+                        <li><a href="MIS.aspx"><i class="action-icon">📋</i> MIS</a></li>
+                        <li><a href="PMMS.aspx"><i class="action-icon">📊</i> PMMS</a></li>
+                        <li><a href="NONERP.aspx"><i class="action-icon">⚙️</i> NON-ERP Applications</a></li>
                     </ul>
                 </div>
 
                 <div class="activity-card glass">
                     <h3>System Info</h3>
-                    <p class="info-text">This is a generic WebForms dashboard template. Replace modules and actions with your actual application functionality.</p>
+                    <p class="info-text">Verify employee access across MIS, PMMS, NON-ERP apps, and Active Directory for smooth, streamlined clearance compliance in one place. Click any application to access it directly.</p>
                     <p class="info-text">Use the navigation menu to access different sections of the system.</p>
                 </div>
             </div>

@@ -33,9 +33,20 @@ namespace MedicalSystem
 
                 string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3" };
                 string[] queries = {
-            "SELECT ActiveStatus, UserName FROM [SAL].[dbo].[UserMaster] WHERE Remark=@EmpID",
-            "SELECT ActiveStatus, UserName FROM [OSR].[dbo].[UserMaster] WHERE Remark=@EmpID",
-            "SELECT ActiveStatus, UserName FROM [TRF_NEW].[dbo].[UserMaster] WHERE Remark=@EmpID"
+            "SELECT U.ActiveStatus, E.EMPLOYEENAME " +
+            "FROM [SAL].[dbo].[UserMaster] U " +
+            "LEFT JOIN [SAL].[dbo].[TAS_EMP_INFO] E ON U.Remark = E.EMPLOYEEID " +
+            "WHERE U.Remark=@EmpID",
+
+            "SELECT U.ActiveStatus, E.EMPLOYEENAME " +
+            "FROM [OSR].[dbo].[UserMaster] U " +
+            "LEFT JOIN [OSR].[dbo].[TAS_EMP_INFO] E ON U.Remark = E.EMPLOYEEID " +
+            "WHERE U.Remark=@EmpID",
+
+            "SELECT U.ActiveStatus, E.EMPLOYEENAME " +
+            "FROM [TRF_NEW].[dbo].[UserMaster] U " +
+            "LEFT JOIN [TRF_NEW].[dbo].[TAS_EMP_INFO] E ON U.Remark = E.EMPLOYEEID " +
+            "WHERE U.Remark=@EmpID"
         };
 
                 string[] systemNames = { "SAL", "OSR", "TRF" };
@@ -74,7 +85,9 @@ namespace MedicalSystem
                                     reader.Read();
 
                                     int status = Convert.ToInt32(reader["ActiveStatus"]);
-                                    string userName = reader["UserName"].ToString().Trim();
+                                    string empName = reader["EMPLOYEENAME"] == DBNull.Value
+                                        ? "No Name Found"
+                                        : reader["EMPLOYEENAME"].ToString().Trim();
 
                                     // Color: 1 = pending (green), 0 = cleared (red)
                                     if (status == 1)
@@ -87,8 +100,8 @@ namespace MedicalSystem
                                         labels[i].CssClass += " red";
                                     }
 
-                                    // Show system name + username
-                                    labels[i].Text = $"{systemNames[i]}: {userName}";
+                                    // Show system name + employee name
+                                    labels[i].Text = $"{systemNames[i]}: {empName}";
                                 }
                             }
                         }
@@ -126,6 +139,7 @@ namespace MedicalSystem
                 lblStatus.Style["display"] = "block";
             }
         }
+
 
 
         // Reset all boxes before checking

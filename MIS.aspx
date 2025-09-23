@@ -157,6 +157,31 @@
     background: #e2e3e5;
     color: #6c757d;
 }
+.legend {
+    margin-bottom: 10px;
+    font-size: 14px;
+    display: flex;
+    gap: 30px; /* More space between each group */
+    align-items: center;
+}
+
+.legend-group {
+    margin-top:10px;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Less space between box and text */
+}
+
+.legend-item {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.legend-item.green { background-color: #4CAF50; }
+.legend-item.red { background-color: #F44336; }
+.legend-item.gray { background-color: #9E9E9E; }
 </style>
 
 <div class="page-content">
@@ -185,6 +210,19 @@
 
     <!-- Status message -->
     <asp:Label ID="lblStatus" runat="server" CssClass="status-message"></asp:Label>
+
+<div class="legend">
+    <div class="legend-group">
+        <span class="legend-item green"></span>Active Account
+    </div>
+    <div class="legend-group">
+        <span class="legend-item red"></span>Deactivated Account
+    </div>
+    <div class="legend-group">
+        <span class="legend-item gray"></span>No Account / Connection Failed
+    </div>
+</div>
+
 
     <!-- Links Section -->
     <div class="connections">

@@ -35,11 +35,11 @@ namespace MedicalSystem
 
                 // Views for each company
                 string[] views = {
-            "HEISCO.V_HEISCO_EMPLOYEE_ACCESS",    // HEISCO Kuwait
-            "GDCO.V_GDCO_EMPLOYEE_ACCESS",        // Gulf Dredging
-            "HTSCO.V_HTSCO_EMPLOYEE_ACCESS",      // HEISCO Resource Kuwait
-            "HSA.V_HSA_EMPLOYEE_ACCESS",          // HEISCO KSA
-            "GULFSKY.V_GULFSKY_EMPLOYEE_ACCESS"   // GulfSky KSA
+            "HEISCO.TAS_MIS_USERS_ACCESS",    // HEISCO Kuwait
+            "GDCO.TAS_MIS_USERS_ACCESS",        // Gulf Dredging
+            "HTSCO.TAS_MIS_USERS_ACCESS",      // HEISCO Resource Kuwait
+            "HSA.TAS_MIS_USERS_ACCESS",          // HEISCO KSA
+            "GULFSKY.TAS_MIS_USERS_ACCESS"   // GulfSky KSA
         };
 
                 // Query templates

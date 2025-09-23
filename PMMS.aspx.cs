@@ -30,8 +30,11 @@ namespace MedicalSystem
             {
                 ResetConnections();
 
-                // Query to get ActiveStatus and EmployeeName
-                string userCheckQuery = "SELECT ActiveStatus, EmployeeName FROM [TAS].[dbo].[Users] WHERE EmployeeID=@EmpID";
+                // ActiveStatus from Users
+                string userCheckQuery = "SELECT ActiveStatus FROM [Users] WHERE EmployeeID=@EmpID";
+
+                // EmployeeName from TAS_EMP_INFO
+                string empNameQuery = "SELECT EMPLOYEENAME FROM [TAS_EMP_INFO] WHERE EMPLOYEEID=@EmpID";
 
                 string[] connections = { "PMMS_Conn1", "PMMS_Conn2", "PMMS_Conn3", "PMMS_Conn4", "PMMS_Conn5" };
                 System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3, conn4, conn5 };
@@ -51,41 +54,48 @@ namespace MedicalSystem
                         };
 
                         using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
-                        using (SqlCommand cmd = new SqlCommand(userCheckQuery, conn))
                         {
-                            cmd.Parameters.AddWithValue("@EmpID", empId);
-                            cmd.CommandTimeout = 5;
                             conn.Open();
 
-                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            // 1) Check ActiveStatus
+                            int? status = null;
+                            using (SqlCommand cmd = new SqlCommand(userCheckQuery, conn))
                             {
-                                if (!reader.HasRows)
+                                cmd.Parameters.AddWithValue("@EmpID", empId);
+                                object result = cmd.ExecuteScalar();
+                                if (result != null) status = Convert.ToInt32(result);
+                            }
+
+                            // 2) Get Employee Name from TAS_EMP_INFO
+                            string empName = "Unknown";
+                            using (SqlCommand cmd = new SqlCommand(empNameQuery, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@EmpID", empId);
+                                object result = cmd.ExecuteScalar();
+                                if (result != null) empName = result.ToString().Trim();
+                            }
+
+                            // 3) Update UI based on status
+                            if (status == null)
+                            {
+                                labels[i].CssClass += " gray";
+                                labels[i].Text = $"{companyNames[i]}: No record found";
+                            }
+                            else
+                            {
+                                recordFoundAnywhere = true;
+
+                                if (status == 1) // Active
                                 {
-                                    labels[i].CssClass += " gray";
-                                    labels[i].Text = $"{companyNames[i]}: No record found";
+                                    labels[i].CssClass += " green";
+                                    hasActiveAccount = true;
                                 }
-                                else
+                                else // Inactive
                                 {
-                                    recordFoundAnywhere = true;
-                                    reader.Read();
-
-                                    int status = Convert.ToInt32(reader["ActiveStatus"]);
-                                    string empName = reader["EmployeeName"].ToString().Trim();
-
-                                    // Set color based on ActiveStatus
-                                    if (status == 1) // Active
-                                    {
-                                        labels[i].CssClass += " green";
-                                        hasActiveAccount = true;
-                                    }
-                                    else // Inactive
-                                    {
-                                        labels[i].CssClass += " red";
-                                    }
-
-                                    // Show Company + Employee Name
-                                    labels[i].Text = $"{companyNames[i]}: {empName}";
+                                    labels[i].CssClass += " red";
                                 }
+
+                                labels[i].Text = $"{companyNames[i]}: {empName}";
                             }
                         }
                     }
@@ -96,7 +106,7 @@ namespace MedicalSystem
                     }
                 }
 
-                // Set overall status message
+                // Overall status message
                 if (!recordFoundAnywhere)
                 {
                     lblStatus.Text = "⚪ Employee record not found in any PMMS system.";
@@ -122,6 +132,7 @@ namespace MedicalSystem
                 lblStatus.Style["display"] = "block";
             }
         }
+
 
 
         // Reset connection boxes to default

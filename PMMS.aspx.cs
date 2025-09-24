@@ -16,6 +16,8 @@ namespace MedicalSystem
             // Prepend dropdown value before Employee ID
             string prefix = ddlCompany.SelectedValue.Trim();
             string empId = prefix + txtEmployeeID.Text.Trim();
+            string emp_num = txtEmployeeID.Text.Trim();
+
             int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // first item = "Select Company"
 
             if (string.IsNullOrEmpty(empId) || selectedCompanyIndex < 0)
@@ -43,6 +45,28 @@ namespace MedicalSystem
                 bool hasActiveAccount = false;
                 bool recordFoundAnywhere = false;
 
+                // 1) Get Employee Name only from selected company connection
+                string empName = "Unknown";
+                try
+                {
+                    string selectedConnStr = ConfigurationManager.ConnectionStrings[connections[selectedCompanyIndex]].ConnectionString;
+                    using (SqlConnection conn = new SqlConnection(selectedConnStr))
+                    {
+                        conn.Open();
+                        using (SqlCommand cmd = new SqlCommand(empNameQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@EmpID", emp_num);
+                            object result = cmd.ExecuteScalar();
+                            if (result != null) empName = result.ToString().Trim();
+                        }
+                    }
+                }
+                catch
+                {
+                    empName = "Unknown";
+                }
+
+                // 2) Now check ActiveStatus in all connections using the same empId
                 for (int i = 0; i < connections.Length; i++)
                 {
                     try
@@ -57,7 +81,6 @@ namespace MedicalSystem
                         {
                             conn.Open();
 
-                            // 1) Check ActiveStatus
                             int? status = null;
                             using (SqlCommand cmd = new SqlCommand(userCheckQuery, conn))
                             {
@@ -66,16 +89,6 @@ namespace MedicalSystem
                                 if (result != null) status = Convert.ToInt32(result);
                             }
 
-                            // 2) Get Employee Name from TAS_EMP_INFO
-                            string empName = "Unknown";
-                            using (SqlCommand cmd = new SqlCommand(empNameQuery, conn))
-                            {
-                                cmd.Parameters.AddWithValue("@EmpID", empId);
-                                object result = cmd.ExecuteScalar();
-                                if (result != null) empName = result.ToString().Trim();
-                            }
-
-                            // 3) Update UI based on status
                             if (status == null)
                             {
                                 labels[i].CssClass += " gray";
@@ -106,7 +119,7 @@ namespace MedicalSystem
                     }
                 }
 
-                // Overall status message
+                // 3) Overall status message
                 if (!recordFoundAnywhere)
                 {
                     lblStatus.Text = "⚪ Employee record not found in any PMMS system.";
@@ -132,7 +145,6 @@ namespace MedicalSystem
                 lblStatus.Style["display"] = "block";
             }
         }
-
 
 
         // Reset connection boxes to default

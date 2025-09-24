@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Data.SqlClient;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.Web.UI;
 
 namespace MedicalSystem
@@ -13,10 +14,10 @@ namespace MedicalSystem
 
         protected void btnCheckClearance_Click(object sender, EventArgs e)
         {
-            // Prepend dropdown value with '-' before Employee ID
             string prefix = ddlCompany.SelectedValue.Trim();
-            string empId = prefix + "-" + txtEmployeeID.Text.Trim();
-            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1; // Because first item = "Select Company"
+            string empId = prefix + "-" + txtEmployeeID.Text.Trim(); // For UserMaster checks (with prefix)
+            string emp_num = txtEmployeeID.Text.Trim(); // For TAS_EMP_INFO name check (no prefix)
+            int selectedCompanyIndex = ddlCompany.SelectedIndex - 1;
 
             if (string.IsNullOrEmpty(empId) || selectedCompanyIndex < 0)
             {
@@ -26,27 +27,32 @@ namespace MedicalSystem
                 return;
             }
 
+            // Map dropdown to company codes for TAS_EMP_INFO
+            var companyCodes = new Dictionary<string, string>
+    {
+        { "H", "HEISCO" },
+        { "G", "GDCO" },
+        { "T", "HTSCO" },
+        { "K", "HSA" },
+        { "S", "GULFSKY" }
+    };
+
+            string companyCode = companyCodes.ContainsKey(prefix) ? companyCodes[prefix] : prefix;
+
             try
             {
-                // Reset all connection boxes
                 ResetConnections();
 
                 string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3" };
-                string[] queries = {
-            "SELECT U.ActiveStatus, E.EMPLOYEENAME " +
-            "FROM [SAL].[dbo].[UserMaster] U " +
-            "LEFT JOIN [SAL].[dbo].[TAS_EMP_INFO] E ON U.Remark = E.EMPLOYEEID " +
-            "WHERE U.Remark=@EmpID",
-
-            "SELECT U.ActiveStatus, E.EMPLOYEENAME " +
-            "FROM [OSR].[dbo].[UserMaster] U " +
-            "LEFT JOIN [OSR].[dbo].[TAS_EMP_INFO] E ON U.Remark = E.EMPLOYEEID " +
-            "WHERE U.Remark=@EmpID",
-
-            "SELECT U.ActiveStatus, E.EMPLOYEENAME " +
-            "FROM [TRF_NEW].[dbo].[UserMaster] U " +
-            "LEFT JOIN [TRF_NEW].[dbo].[TAS_EMP_INFO] E ON U.Remark = E.EMPLOYEEID " +
-            "WHERE U.Remark=@EmpID"
+                string[] userQueries = {
+            "SELECT ActiveStatus FROM [SAL].[dbo].[UserMaster] WHERE Remark=@EmpID",
+            "SELECT ActiveStatus FROM [OSR].[dbo].[UserMaster] WHERE Remark=@EmpID",
+            "SELECT ActiveStatus FROM [TRF_NEW].[dbo].[UserMaster] WHERE Remark=@EmpID"
+        };
+                string[] empQueries = {
+            "SELECT EMPLOYEENAME FROM [SAL].[dbo].[TAS_EMP_INFO] WHERE EMPLOYEEID=@EmpNum AND Company=@Company",
+            "SELECT EMPLOYEENAME FROM [OSR].[dbo].[TAS_EMP_INFO] WHERE EMPLOYEEID=@EmpNum AND Company=@Company",
+            "SELECT EMPLOYEENAME FROM [TRF_NEW].[dbo].[TAS_EMP_INFO] WHERE EMPLOYEEID=@EmpNum AND Company=@Company"
         };
 
                 string[] systemNames = { "SAL", "OSR", "TRF" };
@@ -60,49 +66,48 @@ namespace MedicalSystem
                     try
                     {
                         string connStr = ConfigurationManager.ConnectionStrings[connections[i]].ConnectionString;
-                        SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr)
+                        using (SqlConnection conn = new SqlConnection(connStr))
                         {
-                            ConnectTimeout = 5
-                        };
-
-                        using (SqlConnection conn = new SqlConnection(builder.ConnectionString))
-                        using (SqlCommand cmd = new SqlCommand(queries[i], conn))
-                        {
-                            cmd.Parameters.AddWithValue("@EmpID", empId);
-                            cmd.CommandTimeout = 5;
                             conn.Open();
 
-                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            // First check in UserMaster (with prefix)
+                            int? status = null;
+                            using (SqlCommand cmdUser = new SqlCommand(userQueries[i], conn))
                             {
-                                if (!reader.HasRows)
+                                cmdUser.Parameters.AddWithValue("@EmpID", empId);
+                                object result = cmdUser.ExecuteScalar();
+                                if (result != null) status = Convert.ToInt32(result);
+                            }
+
+                            // Then get Employee Name from TAS_EMP_INFO (no prefix)
+                            string empName = "No Name Found";
+                            using (SqlCommand cmdEmp = new SqlCommand(empQueries[i], conn))
+                            {
+                                cmdEmp.Parameters.AddWithValue("@EmpNum", emp_num);
+                                cmdEmp.Parameters.AddWithValue("@Company", companyCode);
+                                object nameResult = cmdEmp.ExecuteScalar();
+                                if (nameResult != null) empName = nameResult.ToString().Trim();
+                            }
+
+                            // Now update label
+                            if (status == null)
+                            {
+                                labels[i].CssClass += " gray";
+                                labels[i].Text = $"{systemNames[i]}: No record found";
+                            }
+                            else
+                            {
+                                recordFoundAnywhere = true;
+                                if (status == 1)
                                 {
-                                    labels[i].CssClass += " gray";
-                                    labels[i].Text = $"{systemNames[i]}: No record found";
+                                    labels[i].CssClass += " green"; // Pending
+                                    hasPendingItems = true;
                                 }
                                 else
                                 {
-                                    recordFoundAnywhere = true;
-                                    reader.Read();
-
-                                    int status = Convert.ToInt32(reader["ActiveStatus"]);
-                                    string empName = reader["EMPLOYEENAME"] == DBNull.Value
-                                        ? "No Name Found"
-                                        : reader["EMPLOYEENAME"].ToString().Trim();
-
-                                    // Color: 1 = pending (green), 0 = cleared (red)
-                                    if (status == 1)
-                                    {
-                                        labels[i].CssClass += " green";
-                                        hasPendingItems = true;
-                                    }
-                                    else
-                                    {
-                                        labels[i].CssClass += " red";
-                                    }
-
-                                    // Show system name + employee name
-                                    labels[i].Text = $"{systemNames[i]}: {empName}";
+                                    labels[i].CssClass += " red"; // Cleared
                                 }
+                                labels[i].Text = $"{systemNames[i]}: {empName}";
                             }
                         }
                     }
@@ -113,7 +118,7 @@ namespace MedicalSystem
                     }
                 }
 
-                // Overall status message
+                // Final status message
                 if (!recordFoundAnywhere)
                 {
                     lblStatus.Text = "⚪ Employee record not found in any NON-ERP system.";
@@ -139,7 +144,6 @@ namespace MedicalSystem
                 lblStatus.Style["display"] = "block";
             }
         }
-
 
 
         // Reset all boxes before checking

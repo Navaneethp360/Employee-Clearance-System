@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Web.UI;
 
@@ -27,36 +28,35 @@ namespace MedicalSystem
                 return;
             }
 
-            var result = CheckUserInAD(employeeId);
+            var results = CheckUserInAD(employeeId);
 
-            switch (result.Status)
+            if (results.Count == 1 && results[0].Status == ADStatus.NotFound)
             {
-                case ADStatus.Enabled:
-                    ShowStatus($"User {result.AccountName} found and Active in Active Directory!", false);
-                    connAD.Text = $"Active Directory: {result.AccountName} (Active)";
-                    connAD.CssClass = "connection-box green";
-                    break;
-
-                case ADStatus.Disabled:
-                    ShowStatus($"User {result.AccountName} exists but is Disabled in Active Directory.", true);
-                    connAD.Text = $"Active Directory: {result.AccountName} (Disabled)";
-                    connAD.CssClass = "connection-box red";
-                    break;
-
-                case ADStatus.NotFound:
-                    ShowStatus("User not found in Active Directory.", true);
-                    connAD.Text = "Active Directory: Not Found";
-                    connAD.CssClass = "connection-box red";
-                    break;
-
-                case ADStatus.Error:
-                default:
-                    ShowStatus("Error connecting to Active Directory.", true);
-                    connAD.Text = "Active Directory: Error";
-                    connAD.CssClass = "connection-box red";
-                    break;
+                ShowStatus("User not found in Active Directory.", true);
+                connAD.Text = "Active Directory: Not Found";
+                connAD.CssClass = "connection-box red";
+                return;
             }
+
+            string allUsers = "";
+            bool hasDisabled = false;
+
+            foreach (var r in results)
+            {
+                string statusText = r.Status == ADStatus.Enabled ? "Active" :
+                                    r.Status == ADStatus.Disabled ? "Disabled" :
+                                    "Error";
+
+                if (r.Status == ADStatus.Disabled) hasDisabled = true;
+
+                allUsers += $"Username: {r.AccountName} ({statusText})<br/>";
+            }
+
+            connAD.Text = allUsers;
+            connAD.CssClass = hasDisabled ? "connection-box red" : "connection-box green";
+            ShowStatus($"Found {results.Count} matching AD accounts.", false);
         }
+
 
 
         private void ShowStatus(string message, bool isError)
@@ -74,9 +74,9 @@ namespace MedicalSystem
             public string AccountName { get; set; }
         }
 
-        private ADResult CheckUserInAD(string employeeId)
+        private List<ADResult> CheckUserInAD(string employeeId)
         {
-            ADResult resultObj = new ADResult { Status = ADStatus.NotFound, AccountName = string.Empty };
+            var resultsList = new List<ADResult>();
 
             try
             {
@@ -88,39 +88,42 @@ namespace MedicalSystem
                         searcher.Filter = $"(&(objectCategory=user)(|(description={employeeId})(pager={employeeId})))";
                         searcher.PropertiesToLoad.Add("userAccountControl");
                         searcher.PropertiesToLoad.Add("sAMAccountName");
-                        searcher.PropertiesToLoad.Add("description");
-                        searcher.PropertiesToLoad.Add("pager");
 
-                        SearchResult result = searcher.FindOne();
+                        SearchResultCollection results = searcher.FindAll();
 
-                        if (result == null)
-                            return resultObj; // No user found
-
-                        // Get account name if available
-                        if (result.Properties.Contains("sAMAccountName"))
-                            resultObj.AccountName = result.Properties["sAMAccountName"][0].ToString();
-
-                        // Check account status
-                        if (result.Properties.Contains("userAccountControl"))
+                        if (results.Count == 0)
                         {
-                            int uac = (int)result.Properties["userAccountControl"][0];
-                            bool isDisabled = (uac & 0x2) != 0;
-
-                            resultObj.Status = isDisabled ? ADStatus.Disabled : ADStatus.Enabled;
+                            // No matches found
+                            resultsList.Add(new ADResult { Status = ADStatus.NotFound, AccountName = "" });
+                            return resultsList;
                         }
-                        else
+
+                        foreach (SearchResult res in results)
                         {
-                            resultObj.Status = ADStatus.Enabled; // Assume enabled if not set
+                            string accountName = res.Properties.Contains("sAMAccountName")
+                                ? res.Properties["sAMAccountName"][0].ToString()
+                                : "(Unknown)";
+
+                            ADStatus status = ADStatus.Enabled;
+                            if (res.Properties.Contains("userAccountControl"))
+                            {
+                                int uac = (int)res.Properties["userAccountControl"][0];
+                                bool isDisabled = (uac & 0x2) != 0;
+                                status = isDisabled ? ADStatus.Disabled : ADStatus.Enabled;
+                            }
+
+                            resultsList.Add(new ADResult { Status = status, AccountName = accountName });
                         }
                     }
                 }
             }
             catch
             {
-                resultObj.Status = ADStatus.Error;
+                resultsList.Clear();
+                resultsList.Add(new ADResult { Status = ADStatus.Error, AccountName = "" });
             }
 
-            return resultObj;
+            return resultsList;
         }
 
 

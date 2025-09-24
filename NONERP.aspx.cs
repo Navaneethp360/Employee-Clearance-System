@@ -45,9 +45,9 @@ namespace MedicalSystem
 
                 string[] connections = { "NONERP_Conn1", "NONERP_Conn2", "NONERP_Conn3" };
                 string[] userQueries = {
-            "SELECT ActiveStatus FROM [SAL].[dbo].[UserMaster] WHERE Remark=@EmpID",
-            "SELECT ActiveStatus FROM [OSR].[dbo].[UserMaster] WHERE Remark=@EmpID",
-            "SELECT ActiveStatus FROM [TRF_NEW].[dbo].[UserMaster] WHERE Remark=@EmpID"
+            "SELECT ActiveStatus, UserCode FROM [SAL].[dbo].[UserMaster] WHERE Remark=@EmpID",
+            "SELECT ActiveStatus, UserCode FROM [OSR].[dbo].[UserMaster] WHERE Remark=@EmpID",
+            "SELECT ActiveStatus, UserCode FROM [TRF_NEW].[dbo].[UserMaster] WHERE Remark=@EmpID"
         };
                 string[] empQueries = {
             "SELECT EMPLOYEENAME FROM [SAL].[dbo].[TAS_EMP_INFO] WHERE EMPLOYEEID=@EmpNum AND Company=@Company",
@@ -70,16 +70,23 @@ namespace MedicalSystem
                         {
                             conn.Open();
 
-                            // First check in UserMaster (with prefix)
+                            // --- UserMaster: get ActiveStatus and UserCode ---
                             int? status = null;
+                            string userCode = null;
                             using (SqlCommand cmdUser = new SqlCommand(userQueries[i], conn))
                             {
                                 cmdUser.Parameters.AddWithValue("@EmpID", empId);
-                                object result = cmdUser.ExecuteScalar();
-                                if (result != null) status = Convert.ToInt32(result);
+                                using (SqlDataReader reader = cmdUser.ExecuteReader())
+                                {
+                                    if (reader.Read())
+                                    {
+                                        status = reader["ActiveStatus"] != DBNull.Value ? Convert.ToInt32(reader["ActiveStatus"]) : (int?)null;
+                                        userCode = reader["UserCode"] != DBNull.Value ? reader["UserCode"].ToString().Trim() : null;
+                                    }
+                                }
                             }
 
-                            // Then get Employee Name from TAS_EMP_INFO (no prefix)
+                            // --- TAS_EMP_INFO: get Employee Name ---
                             string empName = "No Name Found";
                             using (SqlCommand cmdEmp = new SqlCommand(empQueries[i], conn))
                             {
@@ -89,7 +96,7 @@ namespace MedicalSystem
                                 if (nameResult != null) empName = nameResult.ToString().Trim();
                             }
 
-                            // Now update label
+                            // --- Update label ---
                             if (status == null)
                             {
                                 labels[i].CssClass += " gray";
@@ -107,7 +114,13 @@ namespace MedicalSystem
                                 {
                                     labels[i].CssClass += " red"; // Cleared
                                 }
+
+                                // Show Employee Name + Username
                                 labels[i].Text = $"{systemNames[i]}: {empName}";
+                                if (!string.IsNullOrEmpty(userCode))
+                                {
+                                    labels[i].Text += $" | Username: {userCode}";
+                                }
                             }
                         }
                     }
@@ -118,7 +131,7 @@ namespace MedicalSystem
                     }
                 }
 
-                // Final status message
+                // --- Final status message ---
                 if (!recordFoundAnywhere)
                 {
                     lblStatus.Text = "⚪ Employee record not found in any NON-ERP system.";
@@ -144,7 +157,6 @@ namespace MedicalSystem
                 lblStatus.Style["display"] = "block";
             }
         }
-
 
         // Reset all boxes before checking
         private void ResetConnections()

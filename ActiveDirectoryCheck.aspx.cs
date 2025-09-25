@@ -49,8 +49,10 @@ namespace MedicalSystem
 
                 if (r.Status == ADStatus.Disabled) hasDisabled = true;
 
-                allUsers += $"Username: {r.AccountName} ({statusText})<br/>";
+                // Now shows DisplayName | Username : Status
+                allUsers += $"{r.DisplayName} | Username: {r.AccountName} ({statusText})<br/>";
             }
+
 
             connAD.Text = allUsers;
             connAD.CssClass = hasDisabled ? "connection-box red" : "connection-box green";
@@ -72,6 +74,7 @@ namespace MedicalSystem
         {
             public ADStatus Status { get; set; }
             public string AccountName { get; set; }
+            public string DisplayName { get; set; }  // <-- Add this
         }
 
         private List<ADResult> CheckUserInAD(string employeeId)
@@ -88,6 +91,7 @@ namespace MedicalSystem
                         searcher.Filter = $"(&(objectCategory=user)(|(description={employeeId})(pager={employeeId})))";
                         searcher.PropertiesToLoad.Add("userAccountControl");
                         searcher.PropertiesToLoad.Add("sAMAccountName");
+                        searcher.PropertiesToLoad.Add("displayName");
 
                         SearchResultCollection results = searcher.FindAll();
 
@@ -101,8 +105,12 @@ namespace MedicalSystem
                         foreach (SearchResult res in results)
                         {
                             string accountName = res.Properties.Contains("sAMAccountName")
-                                ? res.Properties["sAMAccountName"][0].ToString()
-                                : "(Unknown)";
+    ? res.Properties["sAMAccountName"][0].ToString()
+    : "(Unknown)";
+
+                            string displayName = res.Properties.Contains("displayName")
+                                ? res.Properties["displayName"][0].ToString()
+                                : "(No Name)";
 
                             ADStatus status = ADStatus.Enabled;
                             if (res.Properties.Contains("userAccountControl"))
@@ -112,7 +120,7 @@ namespace MedicalSystem
                                 status = isDisabled ? ADStatus.Disabled : ADStatus.Enabled;
                             }
 
-                            resultsList.Add(new ADResult { Status = status, AccountName = accountName });
+                            resultsList.Add(new ADResult { Status = status, AccountName = accountName, DisplayName = displayName });
                         }
                     }
                 }

@@ -55,7 +55,7 @@ namespace MedicalSystem
             "SELECT EMPLOYEENAME FROM [TRF_NEW].[dbo].[TAS_EMP_INFO] WHERE EMPLOYEEID=@EmpNum AND Company=@Company"
         };
 
-                string[] systemNames = { "SAL", "OSR", "TRF" };
+                string[] systemNames = { "Salary Certificate", "Facilities Management", "Employee Training (TRF)" };
                 System.Web.UI.WebControls.Label[] labels = { conn1, conn2, conn3 };
 
                 bool hasPendingItems = false;

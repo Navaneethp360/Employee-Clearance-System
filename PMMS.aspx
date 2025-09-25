@@ -182,8 +182,8 @@
     border-radius: 3px;
 }
 
-.legend-item.green { background-color: #4CAF50; }
-.legend-item.red { background-color: #F44336; }
+.legend-item.green { background-color: #8ee0a2; }
+.legend-item.red { background-color: #fa8b82; }
 .legend-item.gray { background-color: #9E9E9E; }
 </style>
 
